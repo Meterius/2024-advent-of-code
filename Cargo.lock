@@ -7,6 +7,7 @@ name = "advent_of_code_2024"
 version = "0.1.0"
 dependencies = [
  "itertools",
+ "utf8-read",
 ]
 
 [[package]]
@@ -23,3 +24,9 @@ checksum = "413ee7dfc52ee1a4949ceeb7dbc8a33f2d6c088194d9f922fb8318faf1f01186"
 dependencies = [
  "either",
 ]
+
+[[package]]
+name = "utf8-read"
+version = "0.4.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "fb566ac06e11c3f13872ebcb0e72ea5f97f0f65a16f45048d0adea21edc28018"
