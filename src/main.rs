@@ -2,7 +2,7 @@ use std::fs;
 use std::io;
 use std::io::BufRead;
 
-use std::collections::BTreeMap;
+use std::collections::{BTreeMap, HashMap, HashSet};
 use std::collections::btree_map;
 
 struct OrderedCounter<K: Ord + Copy> {
@@ -69,6 +69,20 @@ fn day_one_parse(data: fs::File) -> usize {
     return total;
 }
 
+fn day_one_part_2_parse(data: fs::File) -> usize {
+    let mut left = HashSet::<usize>::new();
+    let mut right = HashMap::<usize, usize>::new();
+
+    for line in io::BufReader::new(data).lines().flatten() {
+        let mut numbers = line.split_ascii_whitespace().map(|x| x.parse::<usize>().unwrap());
+        left.insert(numbers.next().unwrap());
+        right.entry(numbers.next().unwrap()).and_modify(|v| { *v += 1 }).or_insert(1);
+    }
+
+    return left.into_iter().map(|x| x * right.get(&x).cloned().unwrap_or(0)).sum();
+}
+
 fn main() {
-    // println!("Day One = {}", day_one_parse(fs::File::open("./data/day_1.txt").unwrap()));
+    let sol_day_one = 1223326; // day_one_parse(fs::File::open("./data/day_1.txt").unwrap())
+    let sol_day_two = 21070419; // day_one_part_2_parse(fs::File::open("./data/day_1.txt").unwrap());
 }
