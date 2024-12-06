@@ -3,13 +3,15 @@ mod day_1;
 mod day_2;
 mod day_3;
 mod day_4;
+mod day_5;
 
 use std::fs;
 
 const DAY_1: bool = false;
 const DAY_2: bool = false;
 const DAY_3: bool = false;
-const DAY_4: bool = true;
+const DAY_4: bool = false;
+const DAY_5: bool = true;
 
 fn main() {
     if DAY_1 {
@@ -34,5 +36,11 @@ fn main() {
         let sol_4_1 = crate::day_4::part_1(fs::File::open("./data/day_4.txt").unwrap());
         let sol_4_2 = crate::day_4::part_2(fs::File::open("./data/day_4.txt").unwrap());
         println!("Day Four: Part1 = {}; Part 2 = {};", sol_4_1, sol_4_2);
+    }
+
+    if DAY_5 {
+        let sol_5_1 = crate::day_5::part_1(fs::File::open("./data/day_5.txt").unwrap());
+        let sol_5_2 = crate::day_5::part_2(fs::File::open("./data/day_5.txt").unwrap());
+        println!("Day Five: Part1 = {}; Part 2 = {};", sol_5_1, sol_5_2);
     }
 }
