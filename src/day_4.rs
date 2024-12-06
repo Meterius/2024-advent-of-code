@@ -1,110 +1,97 @@
 use std::fs::File;
 use std::io::{BufRead, BufReader};
+use itertools::Itertools;
 
-const N: usize = 10;
+#[derive(Copy, Clone, Debug)]
+struct PatternCounter<const N: usize> {
+    pattern: [char; N],
+    count: usize,
+    current: usize,
+}
 
-pub fn part_1(data: File) -> usize {
-    let mut total = 0;
-
-    const pattern: &str = "XMAS";
-
-    let mut hor_forward = 0;
-    let mut hor_backwards = 0;
-
-    let mut prev_diag_forward = [0; N];
-    let mut diag_forward = [0; N];
-
-    let mut prev_diag_backward = [0; N];
-    let mut diag_backward = [0; N];
-
-    let mut vert_forward = [0; N];
-    let mut vert_backward = [0; N];
-
-    for line in BufReader::new(data).lines().flatten() {
-        for (i, x) in line.chars().enumerate() {
-            let r = if i == 0 { 0 } else { prev_diag_forward[i - 1] };
-            if pattern.chars().nth(r).is_some_and(|y| y == x) {
-                if r == pattern.len() - 1 {
-                    total += 1;
-                    diag_forward[i] = 0;
-                } else {
-                    diag_forward[i] = r + 1;
-                }
-            } else {
-                diag_forward[i] = if pattern.chars().next().is_some_and(|y| y == x) { 1 } else { 0 };
-            }
-
-            let r = if i == 0 { 0 } else { prev_diag_backward[i - 1] };
-            if pattern.chars().nth_back(r).is_some_and(|y| y == x) {
-                if r == pattern.len() - 1 {
-                    total += 1;
-                    diag_backward[i] = 0;
-                } else {
-                    diag_backward[i] = r + 1;
-                }
-            } else {
-                diag_backward[i] = if pattern.chars().next_back().is_some_and(|y| y == x) { 1 } else { 0 };
-            }
-
-            let r = vert_forward[i];
-            if pattern.chars().nth(r).is_some_and(|y| y == x) {
-                if r == pattern.len() - 1 {
-                    total += 1;
-                    vert_forward[i] = 0;
-                } else {
-                    vert_forward[i] = r + 1;
-                }
-            } else {
-                vert_forward[i] = if pattern.chars().next().is_some_and(|y| y == x) { 1 } else { 0 };
-            }
-
-            let r = vert_backward[i];
-            if pattern.chars().nth_back(r).is_some_and(|y| y == x) {
-                if r == pattern.len() - 1 {
-                    total += 1;
-                    vert_backward[i] = 0;
-                } else {
-                    vert_backward[i] = r + 1;
-                }
-            } else {
-                vert_backward[i] = if pattern.chars().next_back().is_some_and(|y| y == x) { 1 } else { 0 };
-            }
-
-            let r = hor_forward;
-            if pattern.chars().nth(r).is_some_and(|y| y == x) {
-                if r == pattern.len() - 1 {
-                    total += 1;
-                    hor_forward = 0;
-                } else {
-                    hor_forward = r + 1;
-                }
-            } else {
-                hor_forward = if pattern.chars().next().is_some_and(|y| y == x) { 1 } else { 0 };
-            }
-
-            let r = hor_backwards;
-            if pattern.chars().nth_back(r).is_some_and(|y| y == x) {
-                if r == pattern.len() - 1 {
-                    total += 1;
-                    hor_backwards = 0;
-                } else {
-                    hor_backwards = r + 1;
-                }
-            } else {
-                hor_backwards = if pattern.chars().next_back().is_some_and(|y| y == x) { 1 } else { 0 };
-            }
+impl<const N: usize> PatternCounter<N> {
+    fn new(pattern: [char; N]) -> PatternCounter<N> {
+        PatternCounter {
+            count: 0,
+            current: 0,
+            pattern,
         }
-
-        println!("{} {}", line, total);
-
-        prev_diag_forward = diag_forward;
-        prev_diag_backward = diag_backward;
-
-        hor_forward = 0;
-        hor_backwards = 0;
     }
 
-    return total;
+    fn advance(&mut self, x: char) {
+        if self.pattern[self.current] == x {
+            if self.current == N - 1 {
+                self.count += 1;
+                self.current = if self.pattern[0] == x { 1 } else { 0 };
+            } else {
+                self.current += 1;
+            }
+        } else {
+            self.current = if self.pattern[0] == x { 1 } else { 0 };
+        }
+    }
+
+    fn restart(&mut self) {
+        self.current = 0;
+    }
+}
+
+pub fn part_1(data: File) -> usize {
+    const LINE_LENGTH: usize = 140;
+
+    const PATTERN: [char; 4] = ['X', 'M', 'A', 'S'];
+    const PATTERN_REV: [char; 4] = ['S', 'A', 'M', 'X'];
+
+    let mut horizontal_forward = PatternCounter::new(PATTERN);
+    let mut horizontal_backward = PatternCounter::new(PATTERN_REV);
+
+    let mut vertical_forward = [PatternCounter::new(PATTERN); LINE_LENGTH];
+    let mut vertical_backward = [PatternCounter::new(PATTERN_REV); LINE_LENGTH];
+
+    let mut diag_forward = [PatternCounter::new(PATTERN); LINE_LENGTH];
+    let mut diag_backward = [PatternCounter::new(PATTERN_REV); LINE_LENGTH];
+    let mut diag_base = LINE_LENGTH;
+
+    let mut diag2_forward = [PatternCounter::new(PATTERN); LINE_LENGTH];
+    let mut diag2_backward = [PatternCounter::new(PATTERN_REV); LINE_LENGTH];
+    let mut diag2_base = 0;
+
+    for line in BufReader::new(data).lines().flatten() {
+        assert_eq!(line.len(), LINE_LENGTH);
+
+        for (i, x) in line.chars().enumerate() {
+            horizontal_forward.advance(x);
+            horizontal_backward.advance(x);
+            vertical_forward[i].advance(x);
+            vertical_backward[i].advance(x);
+
+            diag_forward[(diag_base + i) % LINE_LENGTH].advance(x);
+            diag_backward[(diag_base + i) % LINE_LENGTH].advance(x);
+
+            diag2_forward[(diag2_base + i) % LINE_LENGTH].advance(x);
+            diag2_backward[(diag2_base + i) % LINE_LENGTH].advance(x);
+        }
+
+        diag_base = if diag_base == 1 { LINE_LENGTH } else { diag_base - 1 };
+        diag_forward[diag_base % LINE_LENGTH].restart();
+        diag_backward[diag_base % LINE_LENGTH].restart();
+
+        diag2_forward[diag2_base % LINE_LENGTH].restart();
+        diag2_backward[diag2_base % LINE_LENGTH].restart();
+        diag2_base = if diag2_base == LINE_LENGTH - 1 { 0 } else { diag2_base + 1 };
+
+        horizontal_forward.restart();
+        horizontal_backward.restart();
+    }
+
+    return horizontal_forward.count
+        + horizontal_backward.count
+        + vertical_forward.into_iter().map(|x| x.count).sum::<usize>()
+        + vertical_backward.into_iter().map(|x| x.count).sum::<usize>()
+        + diag_forward.into_iter().map(|x| x.count).sum::<usize>()
+        + diag_backward.into_iter().map(|x| x.count).sum::<usize>()
+        + diag2_forward.into_iter().map(|x| x.count).sum::<usize>()
+        + diag2_backward.into_iter().map(|x| x.count).sum::<usize>();
 }
 
 pub fn part_2(data: File) -> usize {
