@@ -7,6 +7,7 @@ mod day_5;
 mod day_6;
 
 use std::fs;
+use std::time::Instant;
 
 const DAY_1: bool = false;
 const DAY_2: bool = false;
@@ -16,39 +17,47 @@ const DAY_5: bool = false;
 const DAY_6: bool = true;
 
 fn main() {
+    let mut now = Instant::now();
+    
     if DAY_1 {
+        now = Instant::now();
         let sol_1_1 = crate::day_1::part_1(fs::File::open("./data/day_1.txt").unwrap());
         let sol_1_2 = crate::day_1::part_2(fs::File::open("./data/day_1.txt").unwrap());
-        println!("Day One: Part1 = {}; Part 2 = {};", sol_1_1, sol_1_2);
+        println!("Day One: Part1 = {}; Part 2 = {}; Took {:.2}ms;", sol_1_1, sol_1_2, now.elapsed().as_secs_f32() * 1000.0f32);
     }
 
     if DAY_2 {
+        now = Instant::now();
         let sol_2_1 = crate::day_2::part_1(fs::File::open("./data/day_2.txt").unwrap());
         let sol_2_2 = crate::day_2::part_2(fs::File::open("./data/day_2.txt").unwrap());
-        println!("Day Two: Part1 = {}; Part 2 = {};", sol_2_1, sol_2_2);
+        println!("Day Two: Part1 = {}; Part 2 = {}; Took {:.2}ms;", sol_2_1, sol_2_2, now.elapsed().as_secs_f32() * 1000.0f32);
     }
 
     if DAY_3 {
+        now = Instant::now();
         let sol_3_1 = crate::day_3::part_1(fs::File::open("./data/day_3.txt").unwrap());
         let sol_3_2 = crate::day_3::part_2(fs::File::open("./data/day_3.txt").unwrap());
-        println!("Day Three: Part1 = {}; Part 2 = {};", sol_3_1, sol_3_2);
+        println!("Day Three: Part1 = {}; Part 2 = {}; Took {:.2}ms;", sol_3_1, sol_3_2, now.elapsed().as_secs_f32() * 1000.0f32);
     }
 
     if DAY_4 {
+        now = Instant::now();
         let sol_4_1 = crate::day_4::part_1(fs::File::open("./data/day_4.txt").unwrap());
         let sol_4_2 = crate::day_4::part_2(fs::File::open("./data/day_4.txt").unwrap());
-        println!("Day Four: Part1 = {}; Part 2 = {};", sol_4_1, sol_4_2);
+        println!("Day Four: Part1 = {}; Part 2 = {}; Took {:.2}ms;", sol_4_1, sol_4_2, now.elapsed().as_secs_f32() * 1000.0f32);
     }
 
     if DAY_5 {
+        now = Instant::now();
         let sol_5_1 = crate::day_5::part_1(fs::File::open("./data/day_5.txt").unwrap());
         let sol_5_2 = crate::day_5::part_2(fs::File::open("./data/day_5.txt").unwrap());
-        println!("Day Five: Part1 = {}; Part 2 = {};", sol_5_1, sol_5_2);
+        println!("Day Five: Part1 = {}; Part 2 = {}; Took {:.2}ms;", sol_5_1, sol_5_2, now.elapsed().as_secs_f32() * 1000.0f32);
     }
 
     if DAY_6 {
+        now = Instant::now();
         let sol_6_1 = crate::day_6::part_1(fs::File::open("./data/day_6.txt").unwrap());
         let sol_6_2 = crate::day_6::part_2(fs::File::open("./data/day_6.txt").unwrap());
-        println!("Day Six: Part1 = {}; Part 2 = {};", sol_6_1, sol_6_2);
+        println!("Day Six: Part1 = {}; Part 2 = {}; Took {:.2}ms;", sol_6_1, sol_6_2, now.elapsed().as_secs_f32() * 1000.0f32);
     }
 }
