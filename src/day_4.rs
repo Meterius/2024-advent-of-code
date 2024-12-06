@@ -18,17 +18,21 @@ impl<const N: usize> PatternCounter<N> {
         }
     }
 
-    fn advance(&mut self, x: char) {
+    fn advance(&mut self, x: char) -> bool {
         if self.pattern[self.current] == x {
             if self.current == N - 1 {
                 self.count += 1;
                 self.current = if self.pattern[0] == x { 1 } else { 0 };
+
+                return true;
             } else {
                 self.current += 1;
             }
         } else {
             self.current = if self.pattern[0] == x { 1 } else { 0 };
         }
+
+        return false;
     }
 
     fn restart(&mut self) {
@@ -36,9 +40,9 @@ impl<const N: usize> PatternCounter<N> {
     }
 }
 
-pub fn part_1(data: File) -> usize {
-    const LINE_LENGTH: usize = 140;
+const LINE_LENGTH: usize = 140;
 
+pub fn part_1(data: File) -> usize {
     const PATTERN: [char; 4] = ['X', 'M', 'A', 'S'];
     const PATTERN_REV: [char; 4] = ['S', 'A', 'M', 'X'];
 
@@ -95,5 +99,45 @@ pub fn part_1(data: File) -> usize {
 }
 
 pub fn part_2(data: File) -> usize {
-    0
+    const PATTERN: [char; 3] = ['M', 'A', 'S'];
+    const PATTERN_REV: [char; 3] = ['S', 'A', 'M'];
+
+    let mut diag_forward = [PatternCounter::new(PATTERN); LINE_LENGTH];
+    let mut diag_backward = [PatternCounter::new(PATTERN_REV); LINE_LENGTH];
+    let mut diag_base = LINE_LENGTH;
+
+    let mut diag2_forward = [PatternCounter::new(PATTERN); LINE_LENGTH];
+    let mut diag2_backward = [PatternCounter::new(PATTERN_REV); LINE_LENGTH];
+    let mut diag2_base = 0;
+
+    let mut total = 0;
+
+    for line in BufReader::new(data).lines().flatten() {
+        assert_eq!(line.len(), LINE_LENGTH);
+
+        let mut diag2_check = [false, false];
+        for (i, x) in line.chars().enumerate() {
+            let diag_curr = diag_forward[(diag_base + i) % LINE_LENGTH].advance(x)
+                | diag_backward[(diag_base + i) % LINE_LENGTH].advance(x);
+
+            let diag2_curr = diag2_forward[(diag2_base + i) % LINE_LENGTH].advance(x)
+                | diag2_backward[(diag2_base + i) % LINE_LENGTH].advance(x);
+
+            if diag_curr && diag2_check[0] {
+                total += 1;
+            }
+
+            diag2_check = [diag2_check[1], diag2_curr];
+        }
+
+        diag_base = if diag_base == 1 { LINE_LENGTH } else { diag_base - 1 };
+        diag_forward[diag_base % LINE_LENGTH].restart();
+        diag_backward[diag_base % LINE_LENGTH].restart();
+
+        diag2_forward[diag2_base % LINE_LENGTH].restart();
+        diag2_backward[diag2_base % LINE_LENGTH].restart();
+        diag2_base = if diag2_base == LINE_LENGTH - 1 { 0 } else { diag2_base + 1 };
+    }
+
+    return total;
 }
