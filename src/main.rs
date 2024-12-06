@@ -18,7 +18,7 @@ const DAY_6: bool = true;
 
 fn main() {
     let mut now = Instant::now();
-    
+
     if DAY_1 {
         now = Instant::now();
         let sol_1_1 = crate::day_1::part_1(fs::File::open("./data/day_1.txt").unwrap());

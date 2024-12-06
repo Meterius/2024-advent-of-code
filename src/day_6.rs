@@ -1,6 +1,8 @@
 use std::fs::File;
 use std::io::{BufRead, BufReader, Write};
 use std::iter::{once};
+use std::sync::mpsc::channel;
+use std::thread;
 use bitflags::bitflags;
 
 #[derive(Debug, Clone, Copy)]
@@ -42,7 +44,7 @@ impl GuardField {
         if x < 0 || x >= (self.width as isize) || y < 0 || y >= (self.height as isize) {
             return None;
         } else {
-            return Some(self.width * y as usize + x as usize);
+            return Some((x as usize) * self.height + y as usize);
         }
     }
 
@@ -128,7 +130,7 @@ impl<'a> GuardWalk<'a> {
             },
         };
     }
-    
+
     fn restart(&mut self, pos: (isize, isize), dir: Direction, visited_cache: &[u8]) {
         self.visited.as_mut_slice().copy_from_slice(visited_cache);
         self.position = pos;
@@ -192,8 +194,14 @@ fn lines_to_field_walk(lines: impl Iterator<Item=String>) -> (GuardField, (isize
         });
     }
 
+    let mut transposed_field = Vec::with_capacity(field.len());
+
+    for i in 0..field.len() {
+        transposed_field.push(field[(i % h) * w + (i / h)]);
+    }
+
     return (GuardField::new(
-        field, w, h,
+        transposed_field, w, h,
     ), pos, dir);
 }
 
@@ -206,72 +214,56 @@ pub fn part_1(data: File) -> usize {
     return walk.total_visited();
 }
 
-fn walk(
-    field: &Vec<bool>,
-    visited: &mut Vec<u8>,
-    mut pos: (isize, isize),
-    mut dir: Direction,
-    w: isize,
-    h: isize
-) -> bool {
-    while visited[(pos.0 * w + pos.1) as usize] & (dir as u8) == 0 {
-        visited[(pos.0 * w + pos.1) as usize] |= dir as u8;
-
-        let next_pos = match dir {
-            Direction::Up => (pos.0 - 1, pos.1),
-            Direction::Down => (pos.0 + 1, pos.1),
-            Direction::Left => (pos.0, pos.1 - 1),
-            Direction::Right => (pos.0, pos.1 + 1),
-        };
-
-        if next_pos.0 < 0 || next_pos.0 >= h || next_pos.1 < 0 || next_pos.1 >= w {
-            return false;
-        } else if field[(next_pos.0 * w + next_pos.1) as usize] {
-            dir = dir.rotated_clockwise();
-        } else {
-            pos = next_pos;
-        }
-    }
-
-    return true;
-}
-
 pub fn part_2(data: File) -> usize {
     let (mut field, pos, dir) = lines_to_field_walk(BufReader::new(data).lines().flatten());
-    let mut test_field = field.clone();
 
-    let mut walk = GuardWalk::new(&mut field, pos, dir);
-    let mut test_walk = GuardWalk::new(&mut test_field, pos, dir);
-    
+    let (tx, rx) = channel();
 
-    let mut total = 0;
-    let mut total_not = 0;
-    'outer: loop {
-        let pos = walk.position;
-        let dir = walk.direction;
-        
-        match walk.step() {
-            GuardWalkStepOutcome::Loop => { break 'outer; },
-            GuardWalkStepOutcome::Rotate => {},
-            GuardWalkStepOutcome::Step(unvisited) => {
-                if unvisited {
-                    test_walk.field.set(walk.position, true);
-                    test_walk.restart(pos, dir, walk.visited.as_slice());
-                    
-                    if !test_walk.step_until_end() {
-                        total += 1;
-                    } else {
-                        total_not += 1;
-                    }
+    let mut handles = Vec::new();
 
-                    test_walk.field.set(walk.position, false);
+    const C: usize = 6;
+    for i in 0..C {
+        let mut field = field.clone();
+        let tx = tx.clone();
+
+        handles.push(thread::spawn(move || {
+            let mut walk = GuardWalk::new(&mut field, pos, dir);
+
+            let mut test_field = walk.field.clone();
+            let mut test_walk = GuardWalk::new(&mut test_field, pos, dir);
+
+            let mut unvisited_counter = 0;
+
+            let mut total = 0;
+            'outer: loop {
+                let pos = walk.position;
+                let dir = walk.direction;
+
+                match walk.step() {
+                    GuardWalkStepOutcome::Loop => { break 'outer; },
+                    GuardWalkStepOutcome::Rotate => {},
+                    GuardWalkStepOutcome::Step(unvisited) => {
+                        if unvisited && (unvisited_counter % C == i) {
+                            test_walk.field.set(walk.position, true);
+                            test_walk.restart(pos, dir, walk.visited.as_slice());
+
+                            if !test_walk.step_until_end() {
+                                total += 1;
+                            }
+
+                            test_walk.field.set(walk.position, false);
+                        }
+
+                        unvisited_counter += 1;
+                    },
+                    GuardWalkStepOutcome::OutOfBounds => { break 'outer; }
                 }
-            },
-            GuardWalkStepOutcome::OutOfBounds => { break 'outer; }
-        }
-    };
-    
-    println!("Found {} possibilities, explored {} invalid ones", total, total_not);
+            };
 
-    return total;
+            tx.send(total).unwrap();
+        }));
+    }
+
+    handles.into_iter().for_each(|h| { h.join().unwrap(); });
+    return rx.iter().take(C).sum();
 }
