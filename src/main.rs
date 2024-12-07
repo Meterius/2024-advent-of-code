@@ -67,6 +67,8 @@ fn main() {
         now = Instant::now();
         let sol_7_1 = crate::day_7::part_1(fs::File::open("./data/day_7.txt").unwrap());
         let sol_7_2 = crate::day_7::part_2(fs::File::open("./data/day_7.txt").unwrap());
+        assert_eq!(sol_7_1, 1582598718861usize);
+        assert_eq!(sol_7_2, 165278151522644usize);
         println!("Day Seven: Part1 = {}; Part 2 = {}; Took {:.2}ms;", sol_7_1, sol_7_2, now.elapsed().as_secs_f32() * 1000.0f32);
     }
 }
