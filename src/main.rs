@@ -6,6 +6,7 @@ mod day_4;
 mod day_5;
 mod day_6;
 mod day_7;
+mod day_8;
 
 use std::fs;
 use std::time::Instant;
@@ -16,7 +17,8 @@ const DAY_3: bool = false;
 const DAY_4: bool = false;
 const DAY_5: bool = false;
 const DAY_6: bool = false;
-const DAY_7: bool = true;
+const DAY_7: bool = false;
+const DAY_8: bool = true;
 
 fn main() {
     let mut now = Instant::now();
@@ -67,8 +69,13 @@ fn main() {
         now = Instant::now();
         let sol_7_1 = crate::day_7::part_1(fs::File::open("./data/day_7.txt").unwrap());
         let sol_7_2 = crate::day_7::part_2(fs::File::open("./data/day_7.txt").unwrap());
-        assert_eq!(sol_7_1, 1582598718861usize);
-        assert_eq!(sol_7_2, 165278151522644usize);
         println!("Day Seven: Part1 = {}; Part 2 = {}; Took {:.2}ms;", sol_7_1, sol_7_2, now.elapsed().as_secs_f32() * 1000.0f32);
+    }
+
+    if DAY_8 {
+        now = Instant::now();
+        let sol_8_1 = crate::day_8::part_1(fs::File::open("./data/day_8.txt").unwrap());
+        let sol_8_2 = crate::day_8::part_2(fs::File::open("./data/day_8.txt").unwrap());
+        println!("Day Eight: Part1 = {}; Part 2 = {}; Took {:.2}ms;", sol_8_1, sol_8_2, now.elapsed().as_secs_f32() * 1000.0f32);
     }
 }

@@ -1,4 +1,6 @@
 use std::collections::BTreeMap;
+use std::fmt::{Debug, Display};
+use std::str::Lines;
 use itertools::Itertools;
 
 pub struct OrderedCounter<K: Ord + Copy> {
@@ -44,5 +46,65 @@ impl<K: Ord + Copy> OrderedCounter<K> {
 
     pub fn is_empty(&self) -> bool {
         return self.bst.is_empty();
+    }
+}
+
+#[derive(Debug, Clone)]
+pub struct Matrix<T: Debug + Display> {
+    pub buffer: Vec<T>,
+    pub width: usize,
+    pub height: usize,
+}
+
+impl<T: Debug + Display> Matrix<T> {
+    pub fn from_lines(mut lines: impl Iterator<Item=String>, parse: impl Fn(char) -> T) -> Matrix<T> {
+        if let Some(first_line) = lines.next() {
+            let mut matrix = Matrix { buffer: Vec::new(), width: first_line.len(), height: 1 };
+
+            for x in first_line.chars() {
+                matrix.buffer.push(parse(x));
+            }
+
+            for line in lines {
+                for x in line.chars() {
+                    matrix.buffer.push(parse(x));
+                }
+                matrix.height += 1;
+            }
+
+            return matrix;
+        } else {
+            return Matrix { buffer: Vec::new(), width: 0, height: 0 };
+        }
+    }
+
+    pub fn point_to_index(&self, (x, y): (isize, isize)) -> Option<usize> {
+        if x < 0 || x >= self.width as isize || y < 0 || y >= self.height as isize {
+            return None;
+        } else {
+            return Some(self.width * (y as usize) + (x as usize));
+        }
+    }
+
+    pub fn index_to_point(&self, i: usize) -> Option<(isize, isize)> {
+        if i < 0 || i > self.buffer.len() {
+            return None;
+        } else {
+            return Some(((i % self.width) as isize, (i / self.width) as isize));
+        }
+    }
+
+    pub fn display_string(&self) -> String {
+        let mut result = String::new();
+
+        for i in 0..self.height {
+            for j in 0..self.width {
+                let idx = self.point_to_index((j as isize, i as isize)).unwrap();
+                result.push_str(format!("{}", self.buffer[idx]).as_str());
+            }
+            result.push('\n');
+        }
+
+        return result;
     }
 }
