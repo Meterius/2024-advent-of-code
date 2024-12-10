@@ -6,7 +6,7 @@ use crate::common::Matrix;
 pub fn part_1(data: File) -> usize {
     let matrix = Matrix::from_lines(BufReader::new(data).lines().flatten(), |x| x);
 
-    let mut antennas: HashMap::<char, Vec<usize>> = HashMap::new();
+    let mut antennas: HashMap<char, Vec<usize>> = HashMap::new();
 
     for (i, &x) in matrix.buffer.iter().enumerate() {
         if x != '.' {
@@ -16,7 +16,7 @@ pub fn part_1(data: File) -> usize {
     
     let mut antinodes = HashSet::new();
 
-    for (&x, locs) in antennas.iter() {
+    for (_, locs) in antennas.iter() {
         for i in 0..locs.len() {
             for j in i + 1..locs.len() {
                 let a = matrix.index_to_point(locs[i]).unwrap();
@@ -44,7 +44,7 @@ pub fn part_1(data: File) -> usize {
 pub fn part_2(data: File) -> usize {
     let matrix = Matrix::from_lines(BufReader::new(data).lines().flatten(), |x| x);
 
-    let mut antennas: HashMap::<char, Vec<usize>> = HashMap::new();
+    let mut antennas: HashMap<char, Vec<usize>> = HashMap::new();
 
     for (i, &x) in matrix.buffer.iter().enumerate() {
         if x != '.' {
@@ -54,7 +54,7 @@ pub fn part_2(data: File) -> usize {
 
     let mut antinodes = HashSet::new();
 
-    for (&x, locs) in antennas.iter() {
+    for (_, locs) in antennas.iter() {
         for i in 0..locs.len() {
             for j in i + 1..locs.len() {
                 let a = matrix.index_to_point(locs[i]).unwrap();

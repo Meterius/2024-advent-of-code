@@ -1,6 +1,5 @@
 use std::collections::{HashMap, HashSet};
 use std::fs::File;
-use std::fmt::{Display};
 use std::io::{BufRead, BufReader};
 use crate::common::Matrix;
 

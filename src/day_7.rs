@@ -37,7 +37,7 @@ pub fn part_1(data: File) -> usize {
 
             if COLLECT_STATS {
                 total_combs += next_targets.len();
-                let test: HashSet::<usize> = HashSet::from_iter(next_targets.iter().cloned());
+                let test: HashSet<usize> = HashSet::from_iter(next_targets.iter().cloned());
                 total_redundants += next_targets.len() - test.len();
             }
 
@@ -97,7 +97,7 @@ pub fn part_2(data: File) -> usize {
 
             if COLLECT_STATS {
                 total_combs += next_targets.len();
-                let test: HashSet::<usize> = HashSet::from_iter(next_targets.iter().cloned());
+                let test: HashSet<usize> = HashSet::from_iter(next_targets.iter().cloned());
                 total_redundants += next_targets.len() - test.len();
             }
 

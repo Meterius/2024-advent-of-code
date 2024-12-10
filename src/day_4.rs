@@ -1,6 +1,5 @@
 use std::fs::File;
 use std::io::{BufRead, BufReader};
-use itertools::Itertools;
 
 #[derive(Copy, Clone, Debug)]
 struct PatternCounter<const N: usize> {

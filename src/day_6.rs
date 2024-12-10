@@ -1,9 +1,7 @@
 use std::fs::File;
-use std::io::{BufRead, BufReader, Write};
-use std::iter::{once};
+use std::io::{BufRead, BufReader};
 use std::sync::mpsc::channel;
 use std::thread;
-use bitflags::bitflags;
 
 #[derive(Debug, Clone, Copy)]
 enum Direction {
@@ -215,7 +213,7 @@ pub fn part_1(data: File) -> usize {
 }
 
 pub fn part_2(data: File) -> usize {
-    let (mut field, pos, dir) = lines_to_field_walk(BufReader::new(data).lines().flatten());
+    let (field, pos, dir) = lines_to_field_walk(BufReader::new(data).lines().flatten());
 
     let (tx, rx) = channel();
 

@@ -14,7 +14,7 @@ fn is_safe(mut numbers: impl Iterator<Item=usize>) -> bool {
 }
 
 fn is_safe_directed(
-    mut numbers: impl Iterator<Item=usize>,
+    numbers: impl Iterator<Item=usize>,
     upwards: bool,
     max_mistakes: usize,
 ) -> bool {
@@ -25,11 +25,11 @@ fn is_safe_directed(
         .is_none()
 }
 
-fn is_safe_except_one(mut numbers: impl Iterator<Item=usize>) -> bool {
+fn is_safe_except_one(numbers: impl Iterator<Item=usize>) -> bool {
     let numbers: Vec<usize> = numbers.collect();
     return (0..numbers.len()).any(
         |j| is_safe(
-            numbers.iter().enumerate().filter(|(i, &x)| *i != j).map(|(_, &x)| x)
+            numbers.iter().enumerate().filter(|(i, _)| *i != j).map(|(_, &x)| x)
         )
     )
 }
