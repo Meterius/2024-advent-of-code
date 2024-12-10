@@ -12,6 +12,7 @@ mod day_10;
 
 use std::fs;
 use std::time::Instant;
+use itertools::assert_equal;
 
 const DAY_1: bool = false;
 const DAY_2: bool = false;
@@ -21,8 +22,8 @@ const DAY_5: bool = false;
 const DAY_6: bool = false;
 const DAY_7: bool = false;
 const DAY_8: bool = false;
-const DAY_9: bool = false;
-const DAY_10: bool = true;
+const DAY_9: bool = true;
+const DAY_10: bool = false;
 
 fn main() {
     let mut now = Instant::now();
