@@ -9,21 +9,23 @@ mod day_7;
 mod day_8;
 mod day_9;
 mod day_10;
+mod day_11;
 
 use std::fs;
 use std::time::Instant;
 use itertools::assert_equal;
 
-const DAY_1: bool = true;
-const DAY_2: bool = true;
-const DAY_3: bool = true;
-const DAY_4: bool = true;
-const DAY_5: bool = true;
-const DAY_6: bool = true;
-const DAY_7: bool = true;
-const DAY_8: bool = true;
-const DAY_9: bool = true;
-const DAY_10: bool = true;
+const DAY_1: bool = false;
+const DAY_2: bool = false;
+const DAY_3: bool = false;
+const DAY_4: bool = false;
+const DAY_5: bool = false;
+const DAY_6: bool = false;
+const DAY_7: bool = false;
+const DAY_8: bool = false;
+const DAY_9: bool = false;
+const DAY_10: bool = false;
+const DAY_11: bool = true;
 
 fn main() {
     let mut now = Instant::now();
@@ -96,5 +98,12 @@ fn main() {
         let sol_10_1 = crate::day_10::part_1(fs::File::open("./data/day_10.txt").unwrap());
         let sol_10_2 = crate::day_10::part_2(fs::File::open("./data/day_10.txt").unwrap());
         println!("Day Ten: Part1 = {}; Part 2 = {}; Took {:.2}ms;", sol_10_1, sol_10_2, now.elapsed().as_secs_f32() * 1000.0f32);
+    }
+
+    if DAY_11 {
+        now = Instant::now();
+        let sol_11_1 = crate::day_11::part_1(fs::File::open("./data/day_11.txt").unwrap());
+        let sol_11_2 = crate::day_11::part_2(fs::File::open("./data/day_11.txt").unwrap());
+        println!("Day Elevent: Part1 = {}; Part 2 = {}; Took {:.2}ms;", sol_11_1, sol_11_2, now.elapsed().as_secs_f32() * 1000.0f32);
     }
 }
