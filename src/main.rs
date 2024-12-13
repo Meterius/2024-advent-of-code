@@ -10,6 +10,7 @@ mod day_8;
 mod day_9;
 mod day_10;
 mod day_11;
+mod day_12;
 
 use std::fs;
 use std::time::Instant;
@@ -25,7 +26,8 @@ const DAY_7: bool = false;
 const DAY_8: bool = false;
 const DAY_9: bool = false;
 const DAY_10: bool = false;
-const DAY_11: bool = true;
+const DAY_11: bool = false;
+const DAY_12: bool = true;
 
 fn main() {
     let mut now = Instant::now();
@@ -104,6 +106,13 @@ fn main() {
         now = Instant::now();
         let sol_11_1 = crate::day_11::part_1(fs::File::open("./data/day_11.txt").unwrap());
         let sol_11_2 = crate::day_11::part_2(fs::File::open("./data/day_11.txt").unwrap());
-        println!("Day Elevent: Part1 = {}; Part 2 = {}; Took {:.2}ms;", sol_11_1, sol_11_2, now.elapsed().as_secs_f32() * 1000.0f32);
+        println!("Day Eleventh: Part1 = {}; Part 2 = {}; Took {:.2}ms;", sol_11_1, sol_11_2, now.elapsed().as_secs_f32() * 1000.0f32);
+    }
+
+    if DAY_12 {
+        now = Instant::now();
+        let sol_12_1 = crate::day_12::part_1(fs::File::open("./data/day_12.txt").unwrap());
+        let sol_12_2 = crate::day_12::part_2(fs::File::open("./data/day_12.txt").unwrap());
+        println!("Day Twelfth: Part1 = {}; Part 2 = {}; Took {:.2}ms;", sol_12_1, sol_12_2, now.elapsed().as_secs_f32() * 1000.0f32);
     }
 }
