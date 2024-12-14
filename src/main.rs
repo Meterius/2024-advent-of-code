@@ -12,6 +12,7 @@ mod day_10;
 mod day_11;
 mod day_12;
 mod day_13;
+mod day_14;
 
 use std::fs;
 use std::time::Instant;
@@ -29,7 +30,8 @@ const DAY_9: bool = false;
 const DAY_10: bool = false;
 const DAY_11: bool = false;
 const DAY_12: bool = false;
-const DAY_13: bool = true;
+const DAY_13: bool = false;
+const DAY_14: bool = true;
 
 fn main() {
     let mut now = Instant::now();
@@ -123,5 +125,12 @@ fn main() {
         let sol_13_1 = crate::day_13::part_1(fs::File::open("./data/day_13.txt").unwrap());
         let sol_13_2 = crate::day_13::part_2(fs::File::open("./data/day_13.txt").unwrap());
         println!("Day Thirteen: Part1 = {}; Part 2 = {}; Took {:.2}ms;", sol_13_1, sol_13_2, now.elapsed().as_secs_f32() * 1000.0f32);
+    }
+
+    if DAY_14 {
+        now = Instant::now();
+        let sol_14_1 = crate::day_14::part_1(fs::File::open("./data/day_14.txt").unwrap());
+        let sol_14_2 = crate::day_14::part_2(fs::File::open("./data/day_14.txt").unwrap());
+        println!("Day Fourteen: Part1 = {}; Part 2 = {}; Took {:.2}ms;", sol_14_1, sol_14_2, now.elapsed().as_secs_f32() * 1000.0f32);
     }
 }
