@@ -6,7 +6,7 @@ use crate::common::Matrix;
 pub fn part_1(data: File) -> usize {
     let matrix = Matrix::from_lines(
         BufReader::new(data).lines().flatten(),
-        |c| c.to_digit(10).unwrap() as usize
+        |c, _| c.to_digit(10).unwrap() as usize
     );
 
     let mut total = 0;
@@ -44,7 +44,7 @@ pub fn part_1(data: File) -> usize {
 pub fn part_2(data: File) -> usize {
     let matrix = Matrix::from_lines(
         BufReader::new(data).lines().flatten(),
-        |c| c.to_digit(10).unwrap() as usize
+        |c, _| c.to_digit(10).unwrap() as usize
     );
 
     let mut total = 0;

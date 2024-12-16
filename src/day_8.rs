@@ -4,7 +4,7 @@ use std::collections::{HashMap, HashSet};
 use crate::common::Matrix;
 
 pub fn part_1(data: File) -> usize {
-    let matrix = Matrix::from_lines(BufReader::new(data).lines().flatten(), |x| x);
+    let matrix = Matrix::from_lines(BufReader::new(data).lines().flatten(), |x, _| x);
 
     let mut antennas: HashMap<char, Vec<usize>> = HashMap::new();
 
@@ -42,7 +42,7 @@ pub fn part_1(data: File) -> usize {
 }
 
 pub fn part_2(data: File) -> usize {
-    let matrix = Matrix::from_lines(BufReader::new(data).lines().flatten(), |x| x);
+    let matrix = Matrix::from_lines(BufReader::new(data).lines().flatten(), |x, _| x);
 
     let mut antennas: HashMap<char, Vec<usize>> = HashMap::new();
 

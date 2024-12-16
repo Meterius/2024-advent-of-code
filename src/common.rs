@@ -57,17 +57,17 @@ pub struct Matrix<T: Debug + Display> {
 }
 
 impl<T: Debug + Display> Matrix<T> {
-    pub fn from_lines(mut lines: impl Iterator<Item=String>, parse: impl Fn(char) -> T) -> Matrix<T> {
+    pub fn from_lines(mut lines: impl Iterator<Item=String>, mut parse: impl FnMut(char, (usize, usize)) -> T) -> Matrix<T> {
         if let Some(first_line) = lines.next() {
             let mut matrix = Matrix { buffer: Vec::new(), width: first_line.len(), height: 1 };
 
-            for x in first_line.chars() {
-                matrix.buffer.push(parse(x));
+            for (i, x) in first_line.chars().enumerate() {
+                matrix.buffer.push(parse(x, (i, matrix.height)));
             }
 
             for line in lines {
-                for x in line.chars() {
-                    matrix.buffer.push(parse(x));
+                for (i, x) in line.chars().enumerate() {
+                    matrix.buffer.push(parse(x, (i, matrix.height)));
                 }
                 matrix.height += 1;
             }
@@ -92,6 +92,10 @@ impl<T: Debug + Display> Matrix<T> {
         } else {
             return Some(((i % self.width) as isize, (i / self.width) as isize));
         }
+    }
+
+    pub fn get(&self, p: (isize, isize)) -> Option<&T> {
+        return self.point_to_index(p).map(|i| &self.buffer[i]);
     }
 
     pub fn display_string(&self) -> String {

@@ -5,7 +5,7 @@ use crate::common::Matrix;
 pub fn part_1(data: File) -> usize {
     let matrix = Matrix::from_lines(
         BufReader::new(data).lines().flatten(),
-        |x| x,
+        |x, _| x,
     );
 
     let mut checked = vec![false; matrix.buffer.len()];
@@ -53,7 +53,7 @@ pub fn part_1(data: File) -> usize {
 pub fn part_2(data: File) -> usize {
     let matrix = Matrix::from_lines(
         BufReader::new(data).lines().flatten(),
-        |x| x,
+        |x, _| x,
     );
 
     let mut checked = vec![false; matrix.buffer.len()];
