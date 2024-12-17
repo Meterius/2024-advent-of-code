@@ -1,7 +1,6 @@
 use std::collections::HashSet;
 use std::fs::File;
 use std::io::{BufRead, BufReader};
-use crate::common::Matrix;
 
 #[derive(Clone, Debug)]
 enum Tile {
@@ -91,7 +90,7 @@ pub fn part_1(data: File) -> usize {
                     let mut p_box = p_next;
 
                     'outer: loop {
-                        let mut p_box_next = (p_box.0 + dir.0, p_box.1 + dir.1);
+                        let p_box_next = (p_box.0 + dir.0, p_box.1 + dir.1);
 
                         match get_tile!(p_box_next) {
                             Tile::Empty => {

@@ -1,7 +1,5 @@
 use std::collections::BTreeMap;
 use std::fmt::{Debug, Display};
-use std::str::Lines;
-use itertools::Itertools;
 
 pub struct OrderedCounter<K: Ord + Copy> {
     bst: BTreeMap<K, usize>
