@@ -109,4 +109,33 @@ impl<T: Debug + Display> Matrix<T> {
 
         return result;
     }
+    
+    pub fn neighborhood_four_way(&self, pos: (isize, isize)) -> impl Iterator<Item=((isize, isize), &T)> {
+        return [(-1, 0), (1, 0), (0, -1), (0, 1)].into_iter().flat_map(move |d| {
+            let next = (pos.0 + d.0, pos.1 + d.1);
+            return self.point_to_index(next).map(|i| (next, &self.buffer[i]));
+        });
+    }
+    
+    pub fn neighborhood_manhattan(&self, pos: (isize, isize), dist: usize) -> impl Iterator<Item=((isize, isize), &T)> {
+        let dist = dist as isize;
+        return (-dist..=dist).flat_map(move |dx| {
+            let max_dy = dist - dx.abs();
+            return (-max_dy..=max_dy).filter_map(move |dy| {
+                let next = (pos.0 + dx, pos.1 + dy);
+                return self.point_to_index(next).map(|i| (next, &self.buffer[i]));
+            });
+        })
+    }
+
+    pub fn boundary_manhattan(&self, pos: (isize, isize), dist: usize) -> impl Iterator<Item=((isize, isize), &T)> {
+        let dist = dist as isize;
+        return (-dist..=dist).flat_map(move |dx| {
+            let max_dy = dist - dx.abs();
+            return (if max_dy != 0 { vec![-max_dy, max_dy].into_iter() } else { vec![0].into_iter() }).filter_map(move |dy| {
+                let next = (pos.0 + dx, pos.1 + dy);
+                return self.point_to_index(next).map(|i| (next, &self.buffer[i]));
+            });
+        })
+    }
 }
