@@ -1,7 +1,7 @@
 use seq_macro::seq;
 
 mod common;
-seq!(N in 1..=22 {
+seq!(N in 1..=23 {
    mod day_~N;
 });
 
@@ -9,11 +9,11 @@ use std::fs;
 use std::time::Instant;
 
 const fn log_day(day: usize) -> bool {
-    return day == 22;
+    return day == 23;
 }
 
 fn main() {
-    seq!(N in 1..=22 {
+    seq!(N in 1..=23 {
         if log_day(N) {
             let now = Instant::now();
             let sol_1 = crate::day_~N::part_1(fs::File::open(concat!("./data/day_", stringify!(N), ".txt")).unwrap());
