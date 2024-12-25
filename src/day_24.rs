@@ -201,6 +201,87 @@ pub fn part_1(data: File) -> usize {
     return circuit.convert_output(&state);
 }
 
-pub fn part_2(data: File) -> usize {
-    return 0;
+fn swap_circuit_registers(
+    circuit: &mut Circuit,
+    a: &str,
+    b: &str,
+) {
+    let a = String::from(a);
+    let a_idx = circuit.labels.get_by_right(&a).unwrap().clone();
+    let b = String::from(b);
+    let b_idx = circuit.labels.get_by_right(&b).unwrap().clone();
+
+    let gate_a = circuit.graph.neighbors_directed(
+        a_idx,
+        Direction::Incoming
+    ).next().unwrap();
+
+    let gate_b = circuit.graph.neighbors_directed(
+        b_idx,
+        Direction::Incoming
+    ).next().unwrap();
+
+    let gate_a_edge = circuit.graph.find_edge(gate_a, a_idx).unwrap();
+    circuit.graph.remove_edge(gate_a_edge);
+    circuit.graph.add_edge(gate_b, a_idx, ());
+
+    let gate_b_edge = circuit.graph.find_edge(gate_b, b_idx).unwrap();
+    circuit.graph.remove_edge(gate_b_edge);
+    circuit.graph.add_edge(gate_a, b_idx, ());
+}
+
+pub fn part_2(data: File) -> String {
+    let swaps = [
+        ("gmt", "z07"),
+        ("qjj", "cbj"),
+        ("dmn", "z18"),
+        ("cfk", "z35")
+    ];
+
+    let mut all_swaps = swaps.iter()
+        .flat_map(|x| [String::from(x.0), String::from(x.1)].into_iter())
+        .collect::<Vec<_>>();
+    all_swaps.sort();
+
+    return all_swaps.into_iter().join(",");
+
+    let mut circuit = compile_circuit(data);
+
+    let swaps = [
+        ("gmt", "z07"),
+        ("qjj", "cbj"),
+        ("dmn", "z18"),
+        ("cfk", "z35")
+    ];
+
+    for (a, b) in swaps.iter() {
+        swap_circuit_registers(&mut circuit, a, b);
+    }
+
+    let input_bits = circuit.interpreted_inputs
+        .values().map(|seq| seq.len()).min().unwrap();
+
+    let output_bits = circuit.outputs.len();
+
+    println!("Input {input_bits} Output {output_bits}");
+
+    for i in 0..input_bits {
+        let x: usize = 1 << i;
+        let y: usize = 0;
+
+        let input = circuit.convert_input(&HashMap::from([
+            (String::from("x"), x),
+            (String::from("y"), y),
+        ]));
+
+        let state = circuit.execute(&input);
+        let z = circuit.convert_output(&state);
+        let expected = (x + y) & ((1 << output_bits) - 1);
+
+        if z != expected {
+            println!("{i} X={x} Y={y} Z={z}={z:b} != {expected}={expected:b}");
+        }
+    }
+
+    return String::from("");
 }

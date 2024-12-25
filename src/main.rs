@@ -9,7 +9,7 @@ use std::fs;
 use std::time::Instant;
 
 const fn log_day(day: usize) -> bool {
-    return day == 25;
+    return day == 24;
 }
 
 fn main() {
