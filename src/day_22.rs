@@ -23,37 +23,35 @@ pub fn part_1(data: File) -> usize {
 }
 
 pub fn part_2(data: File) -> usize {
-    let mut seq_value = HashMap::new();
+    let mut seq_value = vec![0; 20usize.pow(4)];
+    let mut found = vec![false; 20usize.pow(4)];
 
     for line in BufReader::new(data).lines().flatten() {
         let x = line.parse::<usize>().unwrap();
 
-        let mut found = HashSet::new();
-        let mut changes = VecDeque::with_capacity(4);
+        found.as_mut_slice().fill(false);
+        
+        let mut change = 0;
 
         let mut curr = x;
-        for _ in 0..2000 {
+        for _ in 0..3 {
             let mut next = evolve(curr);
+            change = (change * 20 + (10 + next % 10 - curr % 10)) % (20usize.pow(4));
+            curr = next;
+        }
+        
+        for _ in 0..2000 - 3 {
+            let mut next = evolve(curr);
+            change = (change * 20 + (10 + next % 10 - curr % 10)) % (20usize.pow(4));
 
-            if changes.len() == 4 {
-                changes.pop_front();
+            if !found[change] {
+                found[change] = true;
+                seq_value[change] += next % 10;
             }
-            changes.push_back((next % 10) as isize - (curr % 10) as isize);
-
-            if changes.len() == 4 {
-                let mut seq = [0; 4];
-                seq.iter_mut().set_from(changes.iter().cloned());
-                
-                if found.insert(seq.clone()) {
-                    seq_value.entry(seq)
-                        .and_modify(|v| { *v += next % 10; })
-                        .or_insert(next % 10);
-                }
-            }
-
+            
             curr = next;
         }
     }
     
-    return seq_value.values().cloned().max().unwrap_or(0);
+    return seq_value.into_iter().max().unwrap_or(0);
 }
